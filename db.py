@@ -6,12 +6,14 @@ from pymongo.errors import ServerSelectionTimeoutError
 from pymongo.errors import PyMongoError
 from pymongo.errors import InvalidDocument
 
+import db
+
 #connect to mongoDB
 def connect_mongo() -> object:
     try:
-        client = MongoClient('localhost', 27017)
+        iclient = MongoClient('mongodb+srv://creditrepair.sxrqct9.mongodb.net/?retryWrites=true&w=majority', 27017)
         print("Connected successfully!!!")
-        return client
+        return iclient
     except ConnectionFailure as e:
         print("Could not connect to MongoDB: %s" % e)
     except ServerSelectionTimeoutError:
@@ -19,16 +21,18 @@ def connect_mongo() -> object:
     except PyMongoError as e:
         print("Error: %s" % e)
 #select data from mongoDB
-def select_data(client,db_name,collection_name):
+
+def select_data(collection_name):
     try:
-        db = client[db_name]
-        collection = db[collection_name]
+        DB = client['CreditRepair']
+        collection = DB[collection_name]
         return collection
     except InvalidDocument as e:
         print("Error: %s" % e)
 #select 1 record from mongoDB
-def select_one(collection,query):
+def select_one(collection_name,query):
     try:
+        collection = db[collection_name]
         record = collection.find_one(query)
         return record
     except InvalidDocument as e:
@@ -51,3 +55,6 @@ def delete_data(collection,query):
         collection.delete_one(query)
     except InvalidDocument as e:
         print("Error: %s" % e)
+
+
+client = connect_mongo();
